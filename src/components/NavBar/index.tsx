@@ -5,7 +5,7 @@ import Globe from "./Icons/Globe";
 import Profile from "./Icons/Profile";
 import { NavBarProvider } from "@/contexts/NavBarProvider";
 import NavBarContainer from "./NavBarContainer";
-import MiddleNav from "./MiddleNav";
+import MiddleNav from "./MiddleNav/index";
 
 export default function NavBar() {
   return (

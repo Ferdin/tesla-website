@@ -17,7 +17,7 @@ interface NavBarContextType {
 }
 
 // Create context with an initial value
-const NavBarContext = createContext<NavBarContextType | undefined>();
+const NavBarContext = createContext<NavBarContextType | undefined>(undefined);
 
 interface NavBarProviderProps {
   children: ReactNode;
@@ -25,7 +25,7 @@ interface NavBarProviderProps {
 
 function NavBarProvider({ children }: NavBarProviderProps) {
   const [navHover, setNavHover] = useState<boolean>(false);
-  const [activeMenu, setActiveMenu] = useState<string>(null);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
 
   const value = { navHover, setNavHover, activeMenu, setActiveMenu };
   return (

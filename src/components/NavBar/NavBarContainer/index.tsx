@@ -1,4 +1,5 @@
 import { useNavBar } from "@/contexts/NavBarProvider";
+import { ReactNode } from "react";
 
 interface NavBarContainerProps {
   children: ReactNode;
