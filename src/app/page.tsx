@@ -1,5 +1,6 @@
 import NavBar from "@/components/NavBar";
 import Hero from "@/components/Hero";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
@@ -61,7 +62,9 @@ export default function Home() {
         videoURL="/videos/we-are-tesla.mp4"
         heading="We are Tesla"
         orderBtnLabel="Join team"
+        sideLayout={true}
       />
+      <Footer />
     </div>
   );
 }

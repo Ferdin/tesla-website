@@ -14,6 +14,7 @@ interface HeroPropTypes {
   funky?: boolean;
   videoURL?: string;
   smallLabel?: string;
+  sideLayout?: boolean;
 }
 
 const cedarville = Cedarville_Cursive({
@@ -31,6 +32,7 @@ export default function Hero({
   funky,
   videoURL,
   smallLabel,
+  sideLayout,
 }: HeroPropTypes) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   useEffect(() => {
@@ -71,11 +73,15 @@ export default function Hero({
           Your browser does not support the video tag.
         </video>
       )}
-      <div className="absolute inset-0 flex flex-col items-center">
+      <div
+        className={`absolute inset-0 flex flex-col ${
+          sideLayout ? "justify-center gap-8 pl-10" : "items-center"
+        }`}
+      >
         <h2
           className={`${
             funky ? cedarville.className : "font-semibold"
-          } text-white mt-40 text-6xl`}
+          } text-white ${sideLayout ? "" : "mt-40"}  text-6xl`}
         >
           {heading}
         </h2>
@@ -85,11 +91,19 @@ export default function Hero({
         {smallLabel && (
           <h2 className="text-sm font-medium text-white">{smallLabel}</h2>
         )}
-        <div className="mt-auto mb-16 flex justify-center gap-4 font-semibold">
+        <div
+          className={`${
+            sideLayout ? "" : "mt-auto mb-16 justify-center"
+          } flex  gap-4 font-semibold`}
+        >
           <Button
             className={`py-2 px-20 cursor-pointer text-white text-sm ${
               !funky
-                ? " bg-blue-700  rounded-md "
+                ? ` ${
+                    sideLayout
+                      ? "bg-gray-300 text-black rounded-md"
+                      : "bg-blue-700  rounded-md"
+                  } `
                 : " bg-black  hover:bg-white hover:text-black duration-150"
             }`}
           >
