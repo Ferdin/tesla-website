@@ -15,7 +15,9 @@ interface HeroPropTypes {
   videoURL?: string;
   smallLabel?: string;
   sideLayout?: boolean;
+  specs?: { [key: string]: string };
 }
+// array of specs - key and value. key should be in small and value should be in large
 
 const cedarville = Cedarville_Cursive({
   subsets: ["latin"],
@@ -33,6 +35,7 @@ export default function Hero({
   videoURL,
   smallLabel,
   sideLayout,
+  specs,
 }: HeroPropTypes) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   useEffect(() => {
@@ -90,6 +93,19 @@ export default function Hero({
         )}
         {smallLabel && (
           <h2 className="text-sm font-medium text-white">{smallLabel}</h2>
+        )}
+        {specs && (
+          <div
+            className={`${
+              sideLayout ? "" : "mt-auto justify-center"
+            } flex  gap-30 font-semibold text-white`}
+          >
+            {Object.entries(specs).map(([key, value]) => (
+              <div key={key} className="flex flex-col items-center">
+                <strong className="text-2xl">{value}</strong> {key}
+              </div>
+            ))}
+          </div>
         )}
         <div
           className={`${
