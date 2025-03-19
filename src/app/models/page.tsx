@@ -1,11 +1,11 @@
+import Heading from "@/components/Heading";
 import Hero from "@/components/Hero";
-import NavBar from "@/components/NavBar";
+import VideoSlider from "@/components/VideoSlider";
 import React from "react";
 
 export default function page() {
   return (
     <>
-      <NavBar />
       <Hero
         url="/single-page-images/Model-S-Main-Hero-Desktop-NA.png"
         orderBtnLabel="Order Now"
@@ -18,6 +18,17 @@ export default function page() {
           "Top Speed": "322km/h",
           "Peak Power": "1020 hp",
         }}
+        conditionalStatement="Specs displayed are Model S Plain values."
+      />
+      <Heading title="Interior of the Future" />
+      <Hero url="/single-page-images/Model-S-Interior-Desktop.png" />
+      <VideoSlider
+        urls={[
+          "/videos/carousel/Model-S-Interior-Carousel-1-Cinematic-Display-Desktop-Global.mp4",
+          "/videos/carousel/Model-S-Interior-Carousel-2-Yoke-Steering-Desktop.mp4",
+          "/videos/carousel/Model-S-Interior-Carousel-3-Perfect-Environment-Desktop.mp4",
+          "/videos/carousel/Model-S-Interior-Carousel-4-Second-Row-Desktop.mp4",
+        ]}
       />
     </>
   );

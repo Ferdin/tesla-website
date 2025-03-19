@@ -7,8 +7,8 @@ import { useRef, useEffect } from "react";
 
 interface HeroPropTypes {
   url?: string;
-  heading: string;
-  orderBtnLabel: string;
+  heading?: string;
+  orderBtnLabel?: string;
   secondBtnLabel?: string;
   subHeading?: string;
   funky?: boolean;
@@ -16,6 +16,7 @@ interface HeroPropTypes {
   smallLabel?: string;
   sideLayout?: boolean;
   specs?: { [key: string]: string };
+  conditionalStatement?: string;
 }
 // array of specs - key and value. key should be in small and value should be in large
 
@@ -36,6 +37,7 @@ export default function Hero({
   smallLabel,
   sideLayout,
   specs,
+  conditionalStatement,
 }: HeroPropTypes) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   useEffect(() => {
@@ -57,7 +59,7 @@ export default function Hero({
       {url && (
         <Image
           src={url}
-          alt={heading}
+          alt={heading || "Tesla Car Image"}
           fill
           priority
           style={{ objectFit: "cover" }}
@@ -97,34 +99,41 @@ export default function Hero({
         {specs && (
           <div
             className={`${
-              sideLayout ? "" : "mt-auto justify-center"
+              sideLayout ? "" : "mt-auto mb-6 justify-center"
             } flex  gap-30 font-semibold text-white`}
           >
             {Object.entries(specs).map(([key, value]) => (
               <div key={key} className="flex flex-col items-center">
-                <strong className="text-2xl">{value}</strong> {key}
+                <h2 className="text-2xl">{value}</h2>
+                <span className="text-xs">{key}</span>
               </div>
             ))}
           </div>
         )}
         <div
           className={`${
-            sideLayout ? "" : "mt-auto mb-16 justify-center"
+            sideLayout
+              ? ""
+              : `${specs ? "" : "mt-auto"} ${
+                  conditionalStatement ? "mb-6" : "mb-16"
+                } justify-center`
           } flex  gap-4 font-semibold`}
         >
-          <Button
-            className={`py-2 px-20 cursor-pointer text-white text-sm ${
-              !funky
-                ? ` ${
-                    sideLayout
-                      ? "bg-gray-300 text-black rounded-md"
-                      : "bg-blue-700  rounded-md"
-                  } `
-                : " bg-black  hover:bg-white hover:text-black duration-150"
-            }`}
-          >
-            {orderBtnLabel}
-          </Button>
+          {orderBtnLabel && (
+            <Button
+              className={`py-2 px-20 cursor-pointer text-white text-sm ${
+                !funky
+                  ? ` ${
+                      sideLayout
+                        ? "bg-gray-300 text-black rounded-md"
+                        : "bg-blue-700  rounded-md"
+                    } `
+                  : " bg-black  hover:bg-white hover:text-black duration-150"
+              }`}
+            >
+              {orderBtnLabel}
+            </Button>
+          )}
           {secondBtnLabel && (
             <Button
               className={`py-2 px-20  text-sm cursor-pointer ${
@@ -137,6 +146,11 @@ export default function Hero({
             </Button>
           )}
         </div>
+        {conditionalStatement && (
+          <div className="mb-6">
+            <span className="text-xs text-white">{conditionalStatement}</span>
+          </div>
+        )}
       </div>
     </div>
   );
