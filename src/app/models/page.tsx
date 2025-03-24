@@ -29,6 +29,13 @@ export default function page() {
           "/videos/carousel/Model-S-Interior-Carousel-3-Perfect-Environment-Desktop.mp4",
           "/videos/carousel/Model-S-Interior-Carousel-4-Second-Row-Desktop.mp4",
         ]}
+        description={{
+          "Cinematic Experience": `A 17” touchscreen with left-right tilt offers 2200 x 1300 resolution, true colors and exceptional responsiveness for gaming, movies and more.`,
+          "Yoke Steering": `A bold new approach gives you a true connection to Model S, offering better steering feel and unobstructed views of your dash and the road ahead. Tap the brake and Model S automatically selects the correct direction to start your trip`,
+          "Perfect Environment": `Air vents are hidden throughout the cabin, while tri-zone temperature controls, ventilated seats and HEPA filtration deliver the perfect environment.`,
+          "Redesigned Second Row": `Seating for three adults, with extra legroom, headroom and a stowable armrest with integrated storage and wireless charging.`,
+          "Tesla Arcade": "Play games on your in-car touchscreens.",
+        }}
       />
     </>
   );

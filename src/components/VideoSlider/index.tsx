@@ -5,15 +5,19 @@ import gsap from "gsap";
 interface VideoSliderProps {
   urls: string[];
   autoplayInterval?: number; // Time in seconds between slides
+  description?: { [key: string]: string };
 }
 
 export default function VideoSlider({
   urls,
   autoplayInterval = 5,
+  description,
 }: VideoSliderProps) {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const descriptionRef = useRef<HTMLDivElement>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Initialize video refs array
   useEffect(() => {
@@ -32,10 +36,13 @@ export default function VideoSlider({
 
         // Only play the current video
         if (index === currentIndex) {
-          try {
-            video.play();
-          } catch (error) {
-            console.warn("Autoplay failed:", error);
+          const playPromise = video.play();
+          if (playPromise !== undefined) {
+            playPromise
+              .then(() => {})
+              .catch((error) => {
+                console.log(error);
+              });
           }
         }
       }
@@ -49,16 +56,18 @@ export default function VideoSlider({
     return () => clearInterval(interval);
   }, [currentIndex, autoplayInterval, urls]);
 
-  // GSAP animation setup
+  // Slide transition animation
   useEffect(() => {
     if (!sliderRef.current) return;
+    if (isTransitioning) return;
 
-    const slides = sliderRef.current.querySelectorAll(".slide");
+    const slides = Array.from(sliderRef.current.querySelectorAll(".slide"));
+    const currentSlide = slides[currentIndex];
 
-    // Hide all slides first
+    // Initial setup for all slides
     gsap.set(slides, {
       opacity: 0,
-      visibility: "hidden",
+      zIndex: 0,
       position: "absolute",
       top: 0,
       left: 0,
@@ -66,20 +75,65 @@ export default function VideoSlider({
       height: "100%",
     });
 
-    // Show current slide
-    gsap.to(slides[currentIndex], {
+    // Animate the current slide in
+    gsap.to(currentSlide, {
       opacity: 1,
-      visibility: "visible",
+      zIndex: 10,
       duration: 1,
     });
-  }, [currentIndex]);
+  }, [currentIndex, isTransitioning]);
+
+  // Description transition animation
+  useEffect(() => {
+    if (!descriptionRef.current) return;
+    if (isTransitioning) return;
+
+    const descriptions = Array.from(
+      descriptionRef.current.querySelectorAll(".description")
+    );
+
+    if (description) {
+      // Hide all descriptions
+      gsap.set(descriptions, {
+        opacity: 0,
+        display: "none",
+      });
+
+      // Show current description
+      gsap.to(descriptions[currentIndex], {
+        opacity: 1,
+        display: "block",
+        duration: 1,
+      });
+    }
+  }, [currentIndex, description, isTransitioning]);
 
   const goToNextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % urls.length);
-  };
+    if (isTransitioning) return;
 
-  const goToPrevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + urls.length) % urls.length);
+    setIsTransitioning(true);
+
+    if (!sliderRef.current || !descriptionRef.current) return;
+
+    const slides = Array.from(sliderRef.current.querySelectorAll(".slide"));
+    const descriptions = Array.from(
+      descriptionRef.current.querySelectorAll(".description")
+    );
+
+    const nextIndex = (currentIndex + 1) % urls.length;
+
+    // Fade out current slide and description
+    const tl = gsap.timeline({
+      onComplete: () => {
+        setCurrentIndex(nextIndex);
+        setIsTransitioning(false);
+      },
+    });
+
+    tl.to([slides[currentIndex], descriptions[currentIndex]], {
+      opacity: 0,
+      duration: 1,
+    });
   };
 
   // Fixed ref callback function to properly return void
@@ -88,32 +142,36 @@ export default function VideoSlider({
   };
 
   return (
-    <div className="relative bg-black w-full h-screen overflow-hidden">
-      <div ref={sliderRef} className="w-full h-full">
-        {urls.map((url, index) => (
-          <div
-            key={index}
-            className={`slide ${index === currentIndex ? "active" : ""}`}
-          >
-            <video
-              ref={setVideoRef(index)}
-              loop
-              playsInline
-              muted
-              className="w-full h-full object-cover"
+    <div className="flex flex-col justify-center items-center min-h-screen bg-black font-sans">
+      <div className="relative bg-black w-full max-w-5xl rounded-lg overflow-hidden">
+        <div ref={sliderRef} className="w-full aspect-video">
+          {urls.map((url, index) => (
+            <div
+              key={index}
+              className="slide absolute top-0 left-0 w-full h-full"
             >
-              <source src={url} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          </div>
-        ))}
+              <video
+                ref={setVideoRef(index)}
+                loop
+                playsInline
+                muted
+                preload="none"
+                className="w-full h-full object-cover"
+              >
+                <source src={url} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          ))}
+        </div>
       </div>
+
       {/* Slide indicators */}
-      <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+      <div className="mt-4 flex flex-row gap-4">
         {urls.map((_, index) => (
           <button
             key={index}
-            onClick={() => setCurrentIndex(index)}
+            onClick={() => !isTransitioning && setCurrentIndex(index)}
             className={`w-2 h-2 rounded-full transition-all ${
               index === currentIndex
                 ? "bg-white scale-125"
@@ -123,6 +181,22 @@ export default function VideoSlider({
           />
         ))}
       </div>
+
+      {description && (
+        <div ref={descriptionRef} className="w-full max-w-5xl mt-4">
+          {Object.entries(description).map(([key, value], index) => (
+            <div
+              key={key}
+              className={`description text-white ${
+                index === currentIndex ? "block" : "hidden"
+              }`}
+            >
+              <h2 className="text-lg font-semibold">{key}</h2>
+              <p className="mt-2">{value}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

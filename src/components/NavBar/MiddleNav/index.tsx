@@ -200,7 +200,7 @@ export default function MiddleNav() {
                   <span className="font-medium">Model 3</span>
                   <div className="flex flex-row gap-5 m-2">
                     <Link
-                      href="#"
+                      href="/models"
                       className="underline decoration-gray-600 underline-offset-4 hover:decoration-black hover:font-semibold hover:decoration-2 duration-75"
                     >
                       Learn
