@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import gsap from "gsap";
 
 interface VideoSliderProps {
@@ -14,10 +14,44 @@ export default function VideoSlider({
   description,
 }: VideoSliderProps) {
   const sliderRef = useRef<HTMLDivElement>(null);
+  const descriptionRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
-  const descriptionRef = useRef<HTMLDivElement>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Fixed ref callback function to properly return void
+  const setVideoRef = (index: number) => (el: HTMLVideoElement | null) => {
+    videoRefs.current[index] = el;
+  };
+
+  // Memoize goToNextSlide function
+  const goToNextSlide = useCallback(() => {
+    if (isTransitioning) return;
+
+    setIsTransitioning(true);
+
+    if (!sliderRef.current || !descriptionRef.current) return;
+
+    const slides = Array.from(sliderRef.current.querySelectorAll(".slide"));
+    const descriptions = Array.from(
+      descriptionRef.current.querySelectorAll(".description")
+    );
+
+    const nextIndex = (currentIndex + 1) % urls.length;
+
+    // Fade out current slide and description
+    const tl = gsap.timeline({
+      onComplete: () => {
+        setCurrentIndex(nextIndex);
+        setIsTransitioning(false);
+      },
+    });
+
+    tl.to([slides[currentIndex], descriptions[currentIndex]], {
+      opacity: 0,
+      duration: 1,
+    });
+  }, [currentIndex, isTransitioning, urls.length]);
 
   // Initialize video refs array
   useEffect(() => {
@@ -49,12 +83,10 @@ export default function VideoSlider({
     });
 
     // Set up autoplay interval
-    const interval = setInterval(() => {
-      goToNextSlide();
-    }, autoplayInterval * 1000);
+    const interval = setInterval(goToNextSlide, autoplayInterval * 1000);
 
     return () => clearInterval(interval);
-  }, [currentIndex, autoplayInterval, urls]);
+  }, [currentIndex, autoplayInterval, urls, goToNextSlide]);
 
   // Slide transition animation
   useEffect(() => {
@@ -108,39 +140,6 @@ export default function VideoSlider({
     }
   }, [currentIndex, description, isTransitioning]);
 
-  const goToNextSlide = () => {
-    if (isTransitioning) return;
-
-    setIsTransitioning(true);
-
-    if (!sliderRef.current || !descriptionRef.current) return;
-
-    const slides = Array.from(sliderRef.current.querySelectorAll(".slide"));
-    const descriptions = Array.from(
-      descriptionRef.current.querySelectorAll(".description")
-    );
-
-    const nextIndex = (currentIndex + 1) % urls.length;
-
-    // Fade out current slide and description
-    const tl = gsap.timeline({
-      onComplete: () => {
-        setCurrentIndex(nextIndex);
-        setIsTransitioning(false);
-      },
-    });
-
-    tl.to([slides[currentIndex], descriptions[currentIndex]], {
-      opacity: 0,
-      duration: 1,
-    });
-  };
-
-  // Fixed ref callback function to properly return void
-  const setVideoRef = (index: number) => (el: HTMLVideoElement | null) => {
-    videoRefs.current[index] = el;
-  };
-
   return (
     <div className="flex flex-col justify-center items-center min-h-screen bg-black font-sans">
       <div className="relative bg-black w-full max-w-5xl rounded-lg overflow-hidden">
@@ -183,16 +182,16 @@ export default function VideoSlider({
       </div>
 
       {description && (
-        <div ref={descriptionRef} className="w-full max-w-5xl mt-4">
+        <div ref={descriptionRef} className="w-full max-w-5xl mt-4 relative">
           {Object.entries(description).map(([key, value], index) => (
             <div
               key={key}
-              className={`description text-white ${
-                index === currentIndex ? "block" : "hidden"
+              className={`description absolute top-0 left-0 w-full ${
+                index === currentIndex ? "opacity-100 z-10" : "opacity-0 -z-10"
               }`}
             >
-              <h2 className="text-lg font-semibold">{key}</h2>
-              <p className="mt-2">{value}</p>
+              <h2 className="text-lg font-semibold text-white">{key}</h2>
+              <p className="mt-2 text-white">{value}</p>
             </div>
           ))}
         </div>
