@@ -1,5 +1,7 @@
 import Heading from "@/components/Heading";
 import Hero from "@/components/Hero";
+import ImageContent from "@/components/ImageContent";
+import VideoContent from "@/components/VideoContent";
 import VideoSlider from "@/components/VideoSlider";
 import React from "react";
 
@@ -35,6 +37,32 @@ export default function page() {
           "Perfect Environment": `Air vents are hidden throughout the cabin, while tri-zone temperature controls, ventilated seats and HEPA filtration deliver the perfect environment.`,
           "Redesigned Second Row": `Seating for three adults, with extra legroom, headroom and a stowable armrest with integrated storage and wireless charging.`,
           "Tesla Arcade": "Play games on your in-car touchscreens.",
+        }}
+      />
+      <ImageContent
+        title="Stay Connected"
+        description="Instantly connect with multi-device Bluetooth, or fast charge devices with wireless and 36-watt USB-C charging."
+        url="/img/model_s/1.png"
+      />
+      <VideoContent
+        title="Immersive Sound"
+        description="A 22-speaker, 960-watt audio system with Active Road Noise Reduction offers immersive listening and studio-grade sound quality."
+        url="/videos/MS-Interior-Grid-2-Audio-Desktop.mp4"
+        flip={true}
+        width={600}
+        height={384}
+      />
+      <ImageContent
+        title="Room for Everything"
+        description="With front and rear trunks and fold-flat seats you can fit your bike without taking the wheel off—and your luggage too."
+        url="/img/model_s/2.png"
+      />
+      <Hero
+        url="/img/model_s/3.png"
+        specs={{
+          "Peak Power": "1,020hp",
+          "@250 km/h 1/4 mile": "9.23s",
+          "0-100 km/h": "2.1s",
         }}
       />
     </>

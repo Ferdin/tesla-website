@@ -182,7 +182,10 @@ export default function VideoSlider({
       </div>
 
       {description && (
-        <div ref={descriptionRef} className="w-full max-w-5xl mt-4 relative">
+        <div
+          ref={descriptionRef}
+          className="w-full max-w-5xl mt-4 relative mb-24"
+        >
           {Object.entries(description).map(([key, value], index) => (
             <div
               key={key}
