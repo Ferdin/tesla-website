@@ -1,3 +1,5 @@
+import ButtonContent from "@/components/ButtonContent";
+import Compare from "@/components/Compare";
 import Heading from "@/components/Heading";
 import Hero from "@/components/Hero";
 import ImageContent from "@/components/ImageContent";
@@ -65,6 +67,31 @@ export default function page() {
           "0-100 km/h": "2.1s",
         }}
       />
+      <ButtonContent
+        tag="Plaid"
+        title="Beyond Ludicrous"
+        buttonText="Order Now"
+        description="Model S Plaid has the quickest acceleration of any vehicle in production. Updated battery architecture for all Model S trims enables back-to-back track runs without performance degradation."
+      />
+      <Compare
+        mainTitle="Electric Powertrain"
+        mainDescription="Model S platforms unite powertrain and battery technologies for unrivaled performance, range and efficiency. New module and pack thermal architecture allows faster charging and gives you more power and endurance in all conditions."
+        urlOne="/img/model_s/4.png"
+        urlTwo="/img/model_s/5.png"
+        titleOne="Model S"
+        titleTwo="Model S Plaid"
+        descriptionOne="Dual Motor All-Wheel Drive unlocks more range than any other vehicle in our current lineup, with insane power and maximum control."
+        descriptionTwo="Maintain 1,000+ horsepower all the way to 322 km/h with Tri-Motor All-Wheel Drive, featuring torque vectoring and three independent carbon-sleeved rotors."
+        specsOne={{
+          "0-100 km/h": "3.2s",
+          "Range (EPA est.)": "660 km",
+        }}
+        specsTwo={{
+          "0-100 km/h": "2.1s",
+          "Range (EPA est.)": "560 km",
+        }}
+      />
+      <Hero url="/img/model_s/6.png" />
     </>
   );
 }

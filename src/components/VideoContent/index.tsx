@@ -82,7 +82,7 @@ export default function VideoContent({
   return (
     <div
       ref={containerRef}
-      className={`flex flex-row  w-full bg-black px-96 py-10 ${
+      className={`flex flex-row font-sans w-full bg-black px-96 py-10 ${
         flip ? "flex-row-reverse" : ""
       }`}
     >
