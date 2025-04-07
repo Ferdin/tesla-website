@@ -3,9 +3,11 @@ import Compare from "@/components/Compare";
 import Heading from "@/components/Heading";
 import Hero from "@/components/Hero";
 import ImageContent from "@/components/ImageContent";
+import SubHeadingContent from "@/components/SubHeadingContent";
 import TextContent from "@/components/TextContent";
 import VideoContent from "@/components/VideoContent";
 import VideoSlider from "@/components/VideoSlider";
+import MainWrapper from "@/components/Wrappers/MainWrapper";
 import SideBySideWrapper from "@/components/Wrappers/SideBySideWrapper";
 import React from "react";
 
@@ -143,6 +145,12 @@ export default function page() {
           />
         }
       />
+      <MainWrapper>
+        <SubHeadingContent
+          title="Freedom to Travel"
+          descripiton="Enter a destination on your touchscreen and Trip Planner will automatically calculate your route with Superchargers along the way."
+        />
+      </MainWrapper>
     </>
   );
 }
