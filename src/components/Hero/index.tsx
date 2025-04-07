@@ -55,7 +55,9 @@ export default function Hero({
   }, []);
 
   return (
-    <div className="relative w-full h-screen font-sans">
+    <div
+      className={`relative w-full h-screen font-sans ${url ? "bg-black" : ""}`}
+    >
       {url && (
         <Image
           src={url}

@@ -50,11 +50,13 @@ export default function Compare({
           src={`${isSwitched ? urlOne : urlTwo}`}
           alt={mainTitle}
           style={{ objectFit: "cover" }}
-          className="pb-10 opacity-100"
+          className="pb-10 opacity-100 duration-200"
         />
         <div className="flex flex-row gap-6">
           <div
-            className={`${isSwitched ? "border-t-2 opacity-50" : "border-t-4"}`}
+            className={`${
+              isSwitched ? "border-t-2 opacity-50" : "border-t-4"
+            } duration-200`}
           >
             <h2 className="mt-4 font-semibold">{titleOne}</h2>
             <div className="mt-4 text-sm">{descriptionOne}</div>
@@ -72,7 +74,7 @@ export default function Compare({
           <div
             className={`${
               isSwitched ? "border-t-4" : " border-t-2 opacity-50"
-            }`}
+            } duration-200`}
           >
             <h2 className="mt-4 font-semibold">{titleTwo}</h2>
             <div className="mt-4 text-sm">{descriptionTwo}</div>

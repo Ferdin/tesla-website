@@ -3,8 +3,10 @@ import Compare from "@/components/Compare";
 import Heading from "@/components/Heading";
 import Hero from "@/components/Hero";
 import ImageContent from "@/components/ImageContent";
+import TextContent from "@/components/TextContent";
 import VideoContent from "@/components/VideoContent";
 import VideoSlider from "@/components/VideoSlider";
+import SideBySideWrapper from "@/components/Wrappers/SideBySideWrapper";
 import React from "react";
 
 export default function page() {
@@ -92,6 +94,55 @@ export default function page() {
         }}
       />
       <Hero url="/img/model_s/6.png" />
+      <ButtonContent
+        tag="Exterior"
+        title="Designed for Efficiency"
+        buttonText="Order Now"
+        description="With a drag coefficient of just .208 Cd, the lowest on the planet, Model S is built for speed, endurance and range. Improved aerodynamics and a wider chassis offer more responsive performance so you can take corners quicker and with more confidence."
+        secondBtnText="Demo Drive"
+        colorSwitch
+      />
+      <ImageContent
+        title="Relentless Performance"
+        description="Staggered, performance wheels and tires keep the vehicle planted and help transfer maximum power down to the road."
+        url="/img/model_s/grid-a.png"
+      />
+      <ImageContent
+        title="Optimized Aerodynamics"
+        description="Attention to detail on all exterior surfaces makes Model S the most aerodynamic production car on Earth."
+        url="/img/model_s/grid-b.png"
+        flip
+      />
+      <ImageContent
+        title="Refined Styling"
+        description="An iconic silhouette meets refreshed, elegant proportions."
+        url="/img/model_s/grid-c.png"
+      />
+      <SideBySideWrapper
+        leftComponent={
+          <Hero
+            videoURL="/videos/plaid-range.mp4"
+            specs={{
+              "Go anywhere with up to 660 km of estimated range on a single charge":
+                "660 km",
+              "Recharge up to 322 km in 15 minutes at Supercharger locations":
+                "15 min",
+              "Superchargers placed along popular routes": "60,000+",
+            }}
+          />
+        }
+        rightComponent={
+          <TextContent
+            tag="Range"
+            title="Go Anywhere"
+            description="With up to 660 kilometers of estimated range and access to the world’s largest and most powerful fast charging network, you’ll spend less time plugged in and more time on the road."
+            firstBtnTxt="Order Now"
+            firstBtnLink="#"
+            secondBtnTxt="Test Drive"
+            secondBtnLink="#"
+          />
+        }
+      />
     </>
   );
 }
