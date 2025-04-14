@@ -7,6 +7,7 @@ import SubHeadingContent from "@/components/SubHeadingContent";
 import TextContent from "@/components/TextContent";
 import VideoContent from "@/components/VideoContent";
 import VideoSlider from "@/components/VideoSlider";
+import TeslaMap from "@/components/TeslaMap";
 import MainWrapper from "@/components/Wrappers/MainWrapper";
 import SideBySideWrapper from "@/components/Wrappers/SideBySideWrapper";
 import React from "react";
@@ -151,6 +152,13 @@ export default function page() {
           descripiton="Enter a destination on your touchscreen and Trip Planner will automatically calculate your route with Superchargers along the way."
         />
       </MainWrapper>
+
+      <TeslaMap
+        sourceName="Toronto"
+        destinationName="Montreal"
+        source={{ lat: 43.6532, lng: -79.3832 }}
+        destination={{ lat: 45.5019, lng: -73.5674 }}
+      />
     </>
   );
 }
