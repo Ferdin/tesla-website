@@ -7,12 +7,33 @@ import SubHeadingContent from "@/components/SubHeadingContent";
 import TextContent from "@/components/TextContent";
 import VideoContent from "@/components/VideoContent";
 import VideoSlider from "@/components/VideoSlider";
-import TeslaMap from "@/components/TeslaMap";
 import MainWrapper from "@/components/Wrappers/MainWrapper";
 import SideBySideWrapper from "@/components/Wrappers/SideBySideWrapper";
 import React from "react";
+import MapCarousel from "@/components/MapCarousel";
+import SingleButton from "@/components/SingleButton";
 
 export default function page() {
+  const mapConfigurations = [
+    {
+      sourceName: "Toronto",
+      destinationName: "Montreal",
+      source: { lat: 43.6532, lng: -79.3832 },
+      destination: { lat: 45.5019, lng: -73.5674 },
+    },
+    {
+      sourceName: "New York",
+      destinationName: "Boston",
+      source: { lat: 40.7128, lng: -74.006 },
+      destination: { lat: 42.3601, lng: -71.0589 },
+    },
+    {
+      sourceName: "Miami",
+      destinationName: "Orlando",
+      source: { lat: 25.7617, lng: -80.1918 },
+      destination: { lat: 28.5383, lng: -81.3792 },
+    },
+  ];
   return (
     <>
       <Hero
@@ -153,12 +174,10 @@ export default function page() {
         />
       </MainWrapper>
 
-      <TeslaMap
-        sourceName="Toronto"
-        destinationName="Montreal"
-        source={{ lat: 43.6532, lng: -79.3832 }}
-        destination={{ lat: 45.5019, lng: -73.5674 }}
-      />
+      <MapCarousel maps={mapConfigurations} interval={5000} />
+      <MainWrapper center>
+        <SingleButton text="Learn more" />
+      </MainWrapper>
     </>
   );
 }

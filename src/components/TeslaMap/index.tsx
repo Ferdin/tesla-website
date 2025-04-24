@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
+import Image from "next/image";
 
 type LatLng = {
   lat: number;
@@ -13,6 +14,7 @@ interface TeslaMapProps {
   destinationName: string;
   source: LatLng;
   destination: LatLng;
+  showMap?: boolean;
 }
 
 export default function TeslaMap({
@@ -20,12 +22,14 @@ export default function TeslaMap({
   destinationName,
   source,
   destination,
+  showMap,
 }: TeslaMapProps) {
-  const [routeLoaded, setRouteLoaded] = useState(false);
-  const mapRef = useRef<google.maps.Map | null>(null);
+  const mapRef = useRef<ExtendedMap | null>(null);
   const pathRef = useRef<google.maps.Polyline | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const tooltipRef = useRef<HTMLDivElement | null>(null);
+  const [totalDistance, setTotalDistance] = useState(0);
 
   useEffect(() => {
     const loadMap = async () => {
@@ -67,7 +71,7 @@ export default function TeslaMap({
             draggable: false,
           });
 
-          mapRef.current = newMap;
+          mapRef.current = newMap as ExtendedMap;
 
           // Create markers for source and destination
           new google.maps.Marker({
@@ -100,7 +104,23 @@ export default function TeslaMap({
             },
           });
 
-          // Instead of using DirectionsRenderer, we'll handle the route display ourselves
+          // Create tooltip div
+          const tooltip = document.createElement("div");
+          tooltip.className = "distance-tooltip";
+          tooltip.style.position = "absolute";
+          tooltip.style.background = "rgba(0, 0, 0, 0.7)";
+          tooltip.style.color = "white";
+          tooltip.style.padding = "5px 10px";
+          tooltip.style.borderRadius = "4px";
+          tooltip.style.fontSize = "14px";
+          tooltip.style.transform = "translate(-50%, -150%)";
+          tooltip.style.zIndex = "1000";
+          tooltip.style.pointerEvents = "none";
+          tooltip.style.display = "none";
+          mapElement.appendChild(tooltip);
+          tooltipRef.current = tooltip;
+
+          // Setup directions service
           const directionsService = new google.maps.DirectionsService();
           directionsService.route(
             {
@@ -110,11 +130,24 @@ export default function TeslaMap({
             },
             (result, status) => {
               if (status === google.maps.DirectionsStatus.OK) {
-                setRouteLoaded(true);
-
                 // Extract the path from the route
                 if (result && result.routes && result.routes.length > 0) {
-                  const routePath = result.routes[0].overview_path;
+                  // Get total distance in meters from the route
+                  const route = result.routes[0];
+                  let routeDistance = 0;
+
+                  if (route.legs) {
+                    for (const leg of route.legs) {
+                      if (leg.distance) {
+                        routeDistance += leg.distance.value;
+                      }
+                    }
+                  }
+
+                  // Convert to kilometers and save
+                  setTotalDistance(routeDistance / 1000);
+
+                  const routePath = route.overview_path;
 
                   // Create a polyline but don't make it visible yet
                   const path = new google.maps.Polyline({
@@ -175,10 +208,14 @@ export default function TeslaMap({
     };
 
     const animatePath = () => {
-      if (!pathRef.current) return;
+      if (!pathRef.current || !tooltipRef.current) return;
 
       const path = pathRef.current;
       const originalPath = path.getPath().getArray();
+      const tooltip = tooltipRef.current;
+
+      // Show the tooltip
+      tooltip.style.display = "block";
 
       // Start with an empty path
       path.setPath([]);
@@ -208,6 +245,42 @@ export default function TeslaMap({
         // Update the path
         path.setPath(visiblePath);
 
+        // Get the current point (end of the visible path)
+        if (visiblePath.length > 0) {
+          const currentPoint = visiblePath[visiblePath.length - 1];
+
+          // Calculate the current distance based on progress
+          const currentDistance = (totalDistance * easeProgress).toFixed(1);
+
+          // Update tooltip content
+          tooltip.textContent = `${currentDistance} km`;
+
+          // Position tooltip at the current point
+          if (mapRef.current) {
+            const projection = mapRef.current.getProjection();
+            if (projection) {
+              const point = projection.fromLatLngToPoint(currentPoint);
+              const topRight = projection.fromLatLngToPoint(
+                mapRef.current.getBounds()!.getNorthEast()
+              );
+              const bottomLeft = projection.fromLatLngToPoint(
+                mapRef.current.getBounds()!.getSouthWest()
+              );
+              const scale = Math.pow(2, mapRef.current.getZoom()!);
+
+              if (point && topRight && bottomLeft) {
+                const xy = new google.maps.Point(
+                  (point.x - bottomLeft.x) * scale,
+                  (point.y - topRight.y) * scale
+                );
+
+                tooltip.style.left = `${xy.x}px`;
+                tooltip.style.top = `${xy.y}px`;
+              }
+            }
+          }
+        }
+
         // Update the icon position
         const icons = path.get("icons");
         if (icons) {
@@ -218,6 +291,13 @@ export default function TeslaMap({
         // Continue the animation if not complete
         if (progress < 1) {
           requestAnimationFrame(frame);
+        } else {
+          // Animation complete - hide tooltip after a short delay
+          setTimeout(() => {
+            if (tooltipRef.current) {
+              tooltipRef.current.style.display = "none";
+            }
+          }, 1000);
         }
       };
 
@@ -235,20 +315,31 @@ export default function TeslaMap({
       if (observerRef.current) {
         observerRef.current.disconnect();
       }
+      // Cleanup tooltip if component unmounts
+      if (tooltipRef.current && tooltipRef.current.parentNode) {
+        tooltipRef.current.parentNode.removeChild(tooltipRef.current);
+      }
     };
-  }, [destination, destinationName, source, sourceName]);
+  }, [destination, destinationName, source, sourceName, totalDistance]);
 
   return (
-    <div
-      className="route-map-container w-3/4 justify-center"
-      ref={mapContainerRef}
-    >
-      <div
-        id="map"
-        style={{ width: "100%", height: "500px", borderRadius: "8px" }}
-      ></div>
-      {!routeLoaded && <p>Loading route...</p>}
-      {routeLoaded && <p>Route loaded successfully</p>}
+    <div className="route-map-container px-96" ref={mapContainerRef}>
+      {showMap && (
+        <div
+          id="map"
+          style={{ width: "100%", height: "500px", borderRadius: "8px" }}
+        ></div>
+      )}
+      {!showMap && (
+        <div>
+          <Image
+            src="/img/model_s/map-placerholder.png"
+            alt="placeholder_map"
+            width={500}
+            height={500}
+          />
+        </div>
+      )}
     </div>
   );
 }

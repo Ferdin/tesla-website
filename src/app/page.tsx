@@ -1,5 +1,4 @@
 import Hero from "@/components/Hero";
-import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
@@ -60,7 +59,6 @@ export default function Home() {
         orderBtnLabel="Join team"
         sideLayout={true}
       />
-      <Footer />
     </div>
   );
 }

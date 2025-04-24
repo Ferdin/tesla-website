@@ -36,3 +36,9 @@ declare namespace google {
     }
   }
 }
+
+interface ExtendedMap extends google.maps.Map {
+  getProjection(): google.maps.Projection;
+  getBounds(): google.maps.LatLngBounds;
+  getZoom(): number;
+}
